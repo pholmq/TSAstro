@@ -5,6 +5,7 @@ import { useAstroStore } from "../../astroStore";
 import { BIRTH_CITY_PRESETS, getSunSignFromDate } from "../../utils/astrology";
 import { isValidDate } from "../../utils/time-date-functions";
 import TychosLogoIcon from "../../utils/TychosLogoIcon";
+import SegmentedBirthDateInput from "./SegmentedBirthDateInput";
 
 const BASE_UTC_OFFSETS = [
   -720, -660, -600, -570, -540, -480, -420, -360, -300, -240, -210, -180, -120,
@@ -429,20 +430,19 @@ const WelcomeDialog = () => {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "1.2fr 1fr",
+              gridTemplateColumns: "1.3fr 1fr",
               gap: "10px",
             }}
           >
             <div>
-              <label style={STYLES.label}>Birth Date</label>
-              <input
-                type="date"
-                required
+              <label htmlFor="astro-birth-date-year" style={STYLES.label}>
+                Birth Date
+              </label>
+              <SegmentedBirthDateInput
+                idPrefix="astro-birth-date"
                 autoFocus
                 value={birthDate}
-                onChange={(e) => setBirthDate(e.target.value)}
-                onKeyDown={stopInputKeyPropagation}
-                style={STYLES.input}
+                onChange={setBirthDate}
               />
             </div>
 
