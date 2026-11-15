@@ -229,7 +229,7 @@ const NatalChartPanel = () => {
                   whiteSpace: "nowrap",
                 }}
               >
-                ✦ Tychosium Astro
+                ✦ The Tychosium Astro
               </span>
               <button
                 type="button"
