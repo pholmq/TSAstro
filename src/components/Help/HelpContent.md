@@ -1,98 +1,79 @@
-# Welcome to The Tychosium
+# Welcome to The Tychosium Astro
 
-The Tychosium is an interactive 3D simulator of the TYCHOS model. It allows you to visualize the motions of the planets, trace their paths over time, generate Ephemerides (lists of planetary positions), and discover and examine astronomical events such as conjunctions, oppositions, eclipses, Venus & Mercury solar transits, etc.
-
-## Features
-
-- **All planets of the Solar system** in the TYCHOS model configuration are arranged in an actual Euclidean space. The simulation also includes **Halley’s comet** and asteroid **Eros**.
-- **9000+ stars** with Right Ascension, Declination, Magnitude, and Color temperature.
-- **Search:** All stars, planets, comets, and asteroids that are included in the simulator can be searched and tracked.
-- **Accurate scale and distances:** With **"Actual planet sizes"** checked, all celestial bodies are to scale and at correct relative distances. In the **Stars & Helpers** menu, the star distances can be adjusted. Default is `23262` (the TYCHOS model’s reduction factor for star distances), but if set to `1`, the official star distances are used. When **"Celestial sphere"** is checked, the stars are projected at a uniform distance that can be adjusted with **Sphere & Zodiac size**.
-- **Planet camera:** When selecting **"Planet camera"**, the view is attached to Earth, with numerous location presets. It is also possible to view the universe from other planets.
-- **Trace:** When activated, planetary motions and retrogrades can be visualized.
-- **Constellations and Zodiac wheels:** In the **Stars & Helpers** menu, H.A. Rey’s beautiful constellation patterns can be activated. So can the Tropical and Sidereal zodiacs, as well as the Equinoxes & Solstices lines to study the Precession of the Equinoxes.
-- **Perpetual calendar:** The simulation implements the astronomical year count (which includes the year "0"). It accounts for the Gregorian calendar reform and supports Julian astronomical dates.
+**The Tychosium Astro** (`tsastro.tychos.space`) is an interactive 3D astrology and celestial mechanics application built on **The Tychosium** 3D solar system simulator. Instead of flattening the sky onto a 2D paper wheel, it places you inside a real-time 3D Euclidean solar system so you can see how the **Tropical Zodiac**, **planetary aspects**, **star signs**, and **Earth-centered sky** align in space at your exact moment of birth—or at any moment in history or the future.
 
 ---
 
-## Basic Navigation
+## How the App Works
 
+### 1. Welcome Dialog & Birth Moment Initialization
+When you open the app, the Welcome Dialog asks you to either **enter your birth date & time** or **log in** to a saved profile:
+- **Birth Date & Local Time → UTC Epoch:** Your birth date, birth time (defaulting to `12:00` if unknown), and timezone offset are converted into **UTC** and mapped to the exact astronomical **Julian Day** (`JD`) in the simulator.
+- **Instant Sky Alignment:** Submitting immediately sets the 3D solar system clock to your birth moment, activates the **3D Tropical Zodiac ring** around Earth, and pauses time so you can examine your natal sky.
+- **Star-Sign Quote Intro:** As the camera flies in, a curated astrology quote tailored to your **Sun Sign** fades across the sky.
+- **Local Accounts & Saved Profiles:** Profiles you create are saved locally in your browser (`localStorage`), allowing instant one-click login or optional passcode protection with no external account or server required.
+
+### 2. How Planetary Placements & Zodiac Signs Are Calculated
+- **Geocentric Ecliptic Frame:** Every planet's position (`Sun`, `Moon`, `Mercury`, `Venus`, `Mars`, `Jupiter`, `Saturn`, `Uranus`, `Neptune`, `Pluto`) is read from its true physical 3D position relative to **Earth's un-tilted ecliptic plane** (unscaling any visual display multipliers such as the Moon's orbit scale).
+- **Exact Cardinal Alignment:** The 3D **Tropical Zodiac** ring aligns degree-for-degree with the equinoxes and solstices:
+  - **0° Aries (♈):** Vernal Equinox (`+Z`)
+  - **0° Cancer (♋):** Summer Solstice (`+X`)
+  - **0° Libra (♎):** Autumnal Equinox (`-Z`)
+  - **0° Capricorn (♑):** Winter Solstice (`-X`)
+- **Degrees & Signs:** Each 30° sector corresponds to one of the 12 Tropical Zodiac signs (`0°00'` to `29°59'`), updated live as you step or play through time.
+
+### 3. What Are the Colored Lines in 3D? (Planetary Aspects)
+The colored lines connecting planets in 3D are **Planetary Aspect Lines**—they highlight exact geometric angles between pairs of planets **as viewed from Earth** (geocentric longitude separation). Because inner planets (`Sun`, `Mercury`, `Venus`, `Mars`) sit close to Earth at the center of the view, multiple aspect lines connecting to outer planets naturally converge toward the inner solar system.
+
+Each line carries a floating pill badge at its midpoint (e.g., `△ Trine 120° · Sun–Jupiter`) and is color-coded by aspect type:
+- **Gold (`☌` Conjunction, 0° ± 8°):** Two bodies aligned in the same direction from Earth — unified, concentrated energy.
+- **Sky Blue (`⚹` Sextile, 60° ± 6°):** Cooperative angle — creative opportunity and flow.
+- **Crimson (`□` Square, 90° ± 7°):** Right-angle tension — dynamic friction and catalytic action.
+- **Emerald (`△` Trine, 120° ± 7°):** Harmonious triangle angle — effortless resonance and support.
+- **Amber-Orange (`☍` Opposition, 180° ± 8°):** Opposite sides of Earth — polarity, awareness, and balance.
+
+**Inspecting or hiding 3D lines:**
+- Use the **3D Lines: Planetary Aspects** key in the top-left **Birth Chart HUD** to toggle lines/labels on or off, or click any `☌ 0°`, `⚹ 60°`, `□ 90°`, `△ 120°`, `☍ 180°` chip to filter individual aspect colors.
+- Open the **Aspects** tab and **hover or click** any aspect row to highlight that line and reveal its **Earth-centered sightlines** (showing the exact angle radiating from Earth).
+- You can also toggle **3D Aspect Lines** and **Aspect Line Labels** anytime in the top-right menu under **Stars & Helpers**.
+
+### 4. Rising Sign (Ascendant) & Whole-Sign Houses
+If you provide an optional **Birth Location** (via the city presets or custom Latitude/Longitude under *More options* in the Welcome Dialog):
+- The app computes **Greenwich Mean Sidereal Time (GMST)** and **Local Sidereal Time (LST)** from your Julian Day and longitude, then derives your **Ascendant (Rising Sign)** ecliptic longitude.
+- Each planet is assigned to its **Whole-Sign House (`H1`–`H12`)** relative to your Rising Sign.
+
+---
+
+## Using the Interface
+
+### Natal Chart Panel (Top-Left)
+- **Big Three Header:** Displays your **Sun Sign**, **Moon Sign**, and **Rising Sign** (when location is provided), plus whether you are viewing your **Natal Chart** or **Live / Transit Sky**.
+- **My Birth Chart:** Instantly jumps the 3D simulator back to your exact birth date and time.
+- **Live Now:** Jumps to the current UTC date and time so you can compare live transits against the zodiac.
+- **Switch / Edit:** Re-opens the Welcome Dialog to edit your birth data, add a location, or switch profiles.
+- **Planets Tab:** Lists all 10 bodies with their sign glyph, degree, and house. **Click any planet** to focus the 3D camera on it.
+- **Aspects Tab & 3D Lines Key:** Lists every active aspect with its exact orb, provides clickable color filters (`☌ 0°`, `⚹ 60°`, `□ 90°`, `△ 120°`, `☍ 180°`) plus **Lines On/Off** and **Labels On/Off** toggles, and lets you hover or click any aspect to highlight its 3D line and Earth-centered angle rays.
+- **Star Sign Wisdom:** Displays your star sign's quote with a **New quote** button to cycle through astrology wisdom.
+- **Collapse / Expand:** Collapse into the compact **`✦ Birth Chart`** pill whenever you want an unobstructed 3D view.
+
+### Time & Simulation Controls (Top-Right)
+- **Reset:** Restores the simulator to the J2000 Summer Solstice epoch (`2000-06-21`).
+- **Now:** Jumps to the current UTC date and time.
+- **Play / Pause (`▶` / `⏸`) & Step (`⏮` / `⏭`):** Animate or step smoothly forward and backward through time to watch transits, retrogrades, and aspect formations unfold in 3D.
+- **Date, Time (UTC), & Julian Day:** Enter any date or time manually and press `Enter` to jump directly to it.
+
+### Main Menu Folders (Top-Right)
+- **Controls:** Toggle `Actual planet sizes`, `Planet camera` (view the sky from Earth's surface or another planet), `Camera follow`, `Labels`, `Search` (find any of 9,000+ stars or planets), `Positions` (RA/Dec/Distance/Elongation), and `Ephemerides`.
+- **Trace:** Draw 3D orbital paths and retrograde loops over time.
+- **Planets & Orbits:** Adjust planet scaling, orbit visibility, line width, directional arrows, and polar axes.
+- **Stars & Helpers:** Toggle `Stars` (Bright Star Catalogue), `Constellations` (H.A. Rey patterns), `Equinoxes & Solstices`, `Sidereal Zodiac`, `Tropical Zodiac`, `3D Aspect Lines`, `Aspect Line Labels`, and `Sphere & Zodiac size`.
+
+---
+
+## Mouse & Keyboard Navigation
 - **Rotate Camera:** Left-Click + Drag
 - **Zoom:** Mouse Scroll Wheel
-- **Change camera target:** Double-click on a planet
-- **Hover over any celestial body** to see its current position
-
----
-
-## Time & Main Controls (Top Right Menu)
-
-The primary panel controls the flow of time in the simulator.
-
-- **Question mark (?):** Opens this window.
-- **Stripes and X:** Hides/Shows the main menu.
-- **Reset:** Restores the simulator to the default start date (2000-06-21).
-- **Now:** Sets the simulator to the current UTC date and time.
-- **Playback Controls:** - **Play/Pause (▶ / ⏸):** Starts or stops the progression of time.
-  - **Step Back / Step Forward (⏮ / ⏭):** Click to step one unit of time, or click and hold to move through time continuously.
-- **Date, Time (UTC), & Julian Day:** Manually enter specific dates or times. Press `Enter` to instantly jump to that exact moment.
-
----
-
-## Speed Controls
-
-- **1 step equals:** Sets the multiplier for time progression. You can use `Up/Down` on your keyboard to add/remove increments. Negative numbers cause the simulation to move backwards.
-- **Time Unit (Dropdown):** Choose the unit of time for each step/second (e.g., Seconds, Hours, Days, Solar Years, Sidereal Years).
-
----
-
-## Main Menu
-
-Directly below the time controls is the main menu, divided into expandable sections.
-
-### Controls
-
-Toggles for primary viewing modes and control panels.
-
-- **Actual planet sizes:** Toggles between visually scaled-up planets and their true, realistic scale.
-- **Planet camera:** Activates the Planet camera.
-- **Camera follow:** Locks the camera to follow the planet that is currently the camera target.
-- **Labels:** Shows or hides the names of planets and stars.
-- **Orbits:** Toggles the visibility of planetary orbit lines.
-- **Search:** Opens the **Search** tool to find and track specific stars or planets.
-- **Positions:** Opens a live data panel showing the Right Ascension (RA), Declination (Dec), Distance, and Elongation of the planets.
-- **Ephemerides:** Opens the Ephemerides generator to calculate historical or future planetary data over custom date ranges.
-
-### Trace
-
-Tool for drawing the paths that planets take through space over time.
-
-> **Note:** To trace the Sun, you need to set the "1 sec/step equals" to 100 years or higher, since the trace shows the Sun's motion during a Great Year.
-
-- **Trace On:** Enables tracing.
-- **Line width & Dotted line:** Customizes the appearance of the trace lines.
-- **Trace length:** Determines how far back in time the trace tail extends.
-- **Step length:** Adjusts the resolution/smoothness of the generated trace.
-- **Planets:** Select which planets should be traced.
-
-### Planets & Orbits
-
-Adjust the visual representation of the solar system.
-
-- **Planet sizes:** Slider to manually scale up planets for better visibility.
-- **Orbits linewidth:** Adjusts the thickness of the orbit paths.
-- **Arrows:** Shows directional arrows on the orbital paths.
-- **Polar lines:** Toggles the visibility of polar axis lines on planets.
-- **Edit settings:** Opens advanced developer options for modifying object parameters.
-- **Planets:** Select which planets, moons, comets, and asteroids to view.
-
-### Stars & Helpers
-
-Controls the fixed stars, constellation visibility, and Equinox/Zodiac markers.
-
-- **Stars:** Toggles the visibility of the background starfield (Bright Star Catalogue).
-- **Divide distances by:** Pulls the stars closer/further without changing their coordinate positions.
-- **Celestial sphere:** Projects all stars onto a uniform sphere at an equidistant radius.
-- **Constellations:** Draws H.A. Rey's classical constellations.
-- **Equinoxes & Solstices:** Marks the Equinoxes and Solstices.
-- **Sidereal Zodiac / Tropical Zodiac:** Displays the respective zodiacs around the solar system.
-- **Sphere & Zodiac size:** Scales the radius of the celestial sphere, the constellations, and helpers.
+- **Pan:** Right-Click + Drag
+- **Focus Planet:** Double-click a planet in 3D or click it in the **Planets** tab
+- **Inspect Body:** Hover over any celestial body to see its live coordinates
+- **Help (`?`):** Re-open this guide anytime from the top-right menu

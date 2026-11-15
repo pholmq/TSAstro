@@ -242,7 +242,7 @@
     "name": "Pluto",
     "color": "#e3d2b4",
     "type": "planet",
-    "visible": false,
+    "visible": true,
     "texture": "/textures/planets/2k_pluto.jpg",
     "unicodeSymbol": "&#x2647;",
     "planetCamera": true,

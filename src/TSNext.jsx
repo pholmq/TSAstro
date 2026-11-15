@@ -44,6 +44,11 @@ import ObserverReferenceMarker from "./components/Observer/ObserverReferenceMark
 import { VideoCanvas } from "./components/Recorder/r3f-video-recorder";
 import RecorderMenu from "./components/Menus/RecorderMenu";
 import RecorderController from "./components/Recorder/RecorderController";
+import WelcomeDialog from "./components/Astrology/WelcomeDialog";
+import NatalChartPanel from "./components/Astrology/NatalChartPanel";
+import AstrologyController from "./components/Astrology/AstrologyController";
+import AspectLines from "./components/Helpers/AspectLines";
+import { useAstroStore } from "./astroStore";
 
 const isTouchDevice = () => {
   return (
@@ -65,17 +70,23 @@ const TSNext = () => {
   const planetCamera = useStore((s) => s.planetCamera);
   const cameraTransitioning = useStore((s) => s.cameraTransitioning);
   const showPerf = useStore((s) => s.showPerf);
+  const welcomeOpen = useAstroStore((s) => s.welcomeOpen);
 
   const isTouchDev = isTouchDevice();
 
   useEffect(() => {
     if (isTouchDevice()) {
-      toggleShowMenu();
-      toggleShowLevaMenu();
+      useStore.setState({ showMenu: false, showLevaMenu: false });
     }
   }, []);
 
   const getCanvasStyle = () => {
+    if (welcomeOpen) {
+      return {
+        opacity: 0.15,
+        transition: "opacity 1s ease-in-out",
+      };
+    }
     if (!runIntro) {
       return {
         opacity: 1,
@@ -91,6 +102,8 @@ const TSNext = () => {
   return (
     <>
       <div>
+        <WelcomeDialog />
+        <NatalChartPanel />
         <UserInterface />
         <Positions />
         <Ephemerides />
@@ -149,6 +162,8 @@ const TSNext = () => {
           {BSCStarsOn && !isTouchDev && <HighlightSelectedStar />}
           {refStarsOn && <ReferenceStars />}
           <Zodiac />
+          <AspectLines />
+          <AstrologyController />
           <Constellations />
           <PlanetCameraHelper />
         </Suspense>

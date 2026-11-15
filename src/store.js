@@ -13,6 +13,7 @@ export const useStore = create(
     (set) => ({
       posRef: createRef(),
       run: false,
+      setRun: (v) => set({ run: v }),
       toggleRun: () => set((state) => ({ run: !state.run })),
       speedFact: getDefaultSpeedFact(),
       setSpeedFact: (v) => set({ speedFact: v }),
@@ -64,10 +65,10 @@ export const useStore = create(
       globalArrowFixedSize: false,
       setGlobalArrowFixedSize: (v) => set({ globalArrowFixedSize: v }),
 
-      showLevaMenu: true,
+      showLevaMenu: false,
       toggleShowLevaMenu: () =>
         set((state) => ({ showLevaMenu: !state.showLevaMenu })),
-      showMenu: true,
+      showMenu: false,
       toggleShowMenu: () => set((state) => ({ showMenu: !state.showMenu })),
 
       sunLight: 1,
@@ -75,8 +76,13 @@ export const useStore = create(
       zodiac: false,
       setZodiac: (v) => set({ zodiac: v }),
 
-      tropicalZodiac: false,
+      tropicalZodiac: true,
       setTropicalZodiac: (v) => set({ tropicalZodiac: v }),
+
+      showAspects: true,
+      setShowAspects: (v) => set({ showAspects: v }),
+      showAspectLabels: true,
+      setShowAspectLabels: (v) => set({ showAspectLabels: v }),
 
       zodiacSize: 130,
       setZodiacSize: (v) => set({ zodiacSize: v }),

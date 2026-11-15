@@ -353,6 +353,10 @@ export const useStarsHelpersConfig = () => {
     setZodiac,
     tropicalZodiac,
     setTropicalZodiac,
+    showAspects,
+    setShowAspects,
+    showAspectLabels,
+    setShowAspectLabels,
     hScale,
     sethScale,
   } = useStore();
@@ -388,6 +392,16 @@ export const useStarsHelpersConfig = () => {
     },
     "Sidereal Zodiac": { value: zodiac, onChange: setZodiac },
     "Tropical Zodiac": { value: tropicalZodiac, onChange: setTropicalZodiac },
+    "3D Aspect Lines": {
+      value: showAspects,
+      hint: "Colored lines connecting planets that form astrological angles (0°, 60°, 90°, 120°, 180°) from Earth",
+      onChange: setShowAspects,
+    },
+    "Aspect Line Labels": {
+      value: showAspectLabels,
+      hint: "Show angle & planet labels on 3D aspect lines",
+      onChange: setShowAspectLabels,
+    },
     "Sphere & Zodiac size": {
       value: hScale,
       min: 0.5,

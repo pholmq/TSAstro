@@ -13,6 +13,7 @@ import {
 import LevaUI from "./LevaUI";
 
 import { useStore } from "../store";
+import { useAstroStore } from "../astroStore";
 import {
   posToDate,
   posToTime,
@@ -38,6 +39,7 @@ const UserInterface = () => {
   const {
     run,
     toggleRun,
+    updAC,
     updateAC,
     posRef,
     speedFact,
@@ -51,6 +53,7 @@ const UserInterface = () => {
     runIntro,
     setShowHelp,
   } = useStore();
+  const welcomeOpen = useAstroStore((s) => s.welcomeOpen);
 
   const dateRef = useRef();
   const timeRef = useRef();
@@ -81,11 +84,10 @@ const UserInterface = () => {
   }, [showMenu]);
 
   useEffect(() => {
-    dateRef.current.value = posToDate(posRef.current);
-    timeRef.current.value = posToTime(posRef.current);
-    julianRef.current.value = parseFloat(
-      posToJulianDay(posRef.current).toFixed(6)
-    );
+    const pos = posRef.current ?? 0;
+    dateRef.current.value = posToDate(pos);
+    timeRef.current.value = posToTime(pos);
+    julianRef.current.value = parseFloat(posToJulianDay(pos).toFixed(6));
     updateDateTimeDisplay();
 
     if (run) {
@@ -106,7 +108,8 @@ const UserInterface = () => {
     } else {
       clearInterval(intervalRef.current);
     }
-  }, [run]);
+    return () => clearInterval(intervalRef.current);
+  }, [run, updAC, welcomeOpen]);
 
   useEffect(() => {
     return () => stopStepping();
@@ -248,7 +251,7 @@ const UserInterface = () => {
 
   return createPortal(
     <>
-      {!(showMenu || runIntro) && (
+      {!(showMenu || runIntro || welcomeOpen) && (
         <div
           style={{
             position: "fixed",
@@ -323,7 +326,7 @@ const UserInterface = () => {
       <div
         ref={menuRef}
         className="menu"
-        hidden={runIntro || !showMenu}
+        hidden={runIntro || welcomeOpen || !showMenu}
         style={{ zIndex: 2147483647 }}
       >
         <div className="menu-item">

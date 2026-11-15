@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import TWEEN from "@tweenjs/tween.js";
+import { useAstroStore } from "../../astroStore";
 
 // UPDATED EASING: The '8' at the end creates a massive deceleration tail.
 // It rushes the first 80% of the journey, then mathematically crawls to the finish.
@@ -11,7 +12,7 @@ const gentleStartLongTailOut = (t) => {
 };
 
 export default function CameraAnimation({ controlsRef }) {
-  const controls = controlsRef.current;
+  const welcomeOpen = useAstroStore((s) => s.welcomeOpen);
   const tweenRef = useRef(null);
   const [isInitialized, setIsInitialized] = useState(false);
 
@@ -36,28 +37,38 @@ export default function CameraAnimation({ controlsRef }) {
   const duration = 15000;
 
   useEffect(() => {
-    if (isInitialized) {
-      const startPos = flightPath.getPoint(0);
-      controls.setPosition(startPos.x, startPos.y, startPos.z, false);
+    if (welcomeOpen || !isInitialized) return;
+    const controls = controlsRef.current;
+    if (!controls) return;
 
-      const tweenObj = { t: 0 };
+    const startPos = flightPath.getPoint(0);
+    controls.setPosition(startPos.x, startPos.y, startPos.z, false);
 
-      tweenRef.current = new TWEEN.Tween(tweenObj)
-        .to({ t: 1 }, duration)
-        .easing(gentleStartLongTailOut)
-        .onUpdate(() => {
-          const currentPos = flightPath.getPoint(tweenObj.t);
-          controls.setPosition(currentPos.x, currentPos.y, currentPos.z, false);
-        })
-        .onComplete(() => {
-          tweenRef.current = null;
-        })
-        .start();
-    }
-  }, [isInitialized, flightPath]);
+    const tweenObj = { t: 0 };
+
+    tweenRef.current = new TWEEN.Tween(tweenObj)
+      .to({ t: 1 }, duration)
+      .easing(gentleStartLongTailOut)
+      .onUpdate(() => {
+        const currentPos = flightPath.getPoint(tweenObj.t);
+        controls.setPosition(currentPos.x, currentPos.y, currentPos.z, false);
+      })
+      .onComplete(() => {
+        tweenRef.current = null;
+      })
+      .start();
+
+    return () => {
+      if (tweenRef.current) {
+        tweenRef.current.stop();
+        tweenRef.current = null;
+      }
+    };
+  }, [welcomeOpen, isInitialized, controlsRef, flightPath]);
 
   useFrame(() => {
-    if (controls && !isInitialized) {
+    if (welcomeOpen) return;
+    if (controlsRef.current && !isInitialized) {
       setIsInitialized(true);
       return;
     }

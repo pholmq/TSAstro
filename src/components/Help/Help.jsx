@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { useStore } from "../../store";
+import { useAstroStore } from "../../astroStore";
 import { FaExternalLinkAlt, FaGithub } from "react-icons/fa";
 import ReactMarkdown from "react-markdown";
 import helpContent from "./HelpContent.md";
@@ -14,6 +15,7 @@ const Help = () => {
   const showHelpOnStartup = useStore((s) => s.showHelpOnStartup);
   const setShowHelpOnStartup = useStore((s) => s.setShowHelpOnStartup);
   const runIntro = useStore((s) => s.runIntro);
+  const welcomeOpen = useAstroStore((s) => s.welcomeOpen);
 
   const [isDragging, setIsDragging] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -30,9 +32,9 @@ const Help = () => {
       .catch((error) => console.error("Error loading help content:", error));
   }, []);
 
-  // 15-second startup timer
+  // 15-second startup timer (deferred until welcome dialog is completed)
   useEffect(() => {
-    if (showHelpOnStartup && !timerStarted.current) {
+    if (showHelpOnStartup && !welcomeOpen && !timerStarted.current) {
       timerStarted.current = true;
       const timer = setTimeout(() => {
         setShowHelp(true);
@@ -40,7 +42,7 @@ const Help = () => {
 
       return () => clearTimeout(timer);
     }
-  }, [showHelpOnStartup, setShowHelp]);
+  }, [showHelpOnStartup, welcomeOpen, setShowHelp]);
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -80,7 +82,7 @@ const Help = () => {
     }
   };
 
-  if (!showHelp || runIntro) return null;
+  if (!showHelp || runIntro || welcomeOpen) return null;
 
   return createPortal(
     <div
@@ -148,7 +150,7 @@ const Help = () => {
             }}
           >
             <TychosLogoIcon size={20} />
-            The Tychosium
+            The Tychosium Astro
           </div>
 
           <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
@@ -170,10 +172,10 @@ const Help = () => {
               <FaExternalLinkAlt />
             </div>
             <div
-              title="GitHub Repository"
+              title="GitHub Repository (TSAstro)"
               onClick={(e) => {
                 e.stopPropagation();
-                window.open("https://github.com/pholmq/TSN", "_blank");
+                window.open("https://github.com/pholmq/TSAstro", "_blank");
               }}
               style={{
                 color: "#8C92A4",

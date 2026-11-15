@@ -3,6 +3,7 @@ import { useFrame, useThree } from "@react-three/fiber";
 import { Vector3 } from "three";
 import { PerspectiveCamera, CameraControls } from "@react-three/drei";
 import { useStore, useSettingsStore } from "../store";
+import { useAstroStore } from "../astroStore";
 import CameraAnimation from "./Intro/CameraAnimation";
 
 export default function OrbitCamera() {
@@ -20,6 +21,7 @@ export default function OrbitCamera() {
   const setCameraControlsRef = useStore((s) => s.setCameraControlsRef);
   const cameraTransitioning = useStore((s) => s.cameraTransitioning);
   const actualPlanetSizes = useStore((s) => s.actualPlanetSizes);
+  const welcomeOpen = useAstroStore((s) => s.welcomeOpen);
 
   const targetObjRef = useRef(null);
   const target = useMemo(() => new Vector3(), []);
@@ -44,6 +46,8 @@ export default function OrbitCamera() {
 
   useEffect(() => {
     const handleMouseDown = (event) => {
+      if (useAstroStore.getState().welcomeOpen) return;
+      if (event.target?.closest?.(".astro-welcome-modal")) return;
       if (event.button === 0) {
         setRunIntro(false);
       }
@@ -118,7 +122,7 @@ export default function OrbitCamera() {
         // Conditional pan disabling: 0 on mobile, 2.0 (default) on desktop
         truckSpeed={isTouchDevice ? 0 : 2.0}
       />
-      {runIntro && <CameraAnimation controlsRef={controlsRef} />}
+      {runIntro && !welcomeOpen && <CameraAnimation controlsRef={controlsRef} />}
     </>
   );
 }

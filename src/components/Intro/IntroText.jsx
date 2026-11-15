@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from "react";
 import { Text3D } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { useStore } from "../../store";
+import { useAstroStore } from "../../astroStore";
 import TychosLogo3D from "./TychosLogo3D";
 
 // --- STRICT TIMING CONSTANTS ---
@@ -12,6 +13,7 @@ const FADE_SPEED = 0.05; // Consistent slow fade speed
 export default function IntroText() {
   const runIntro = useStore((s) => s.runIntro);
   const setRunIntro = useStore((s) => s.setRunIntro);
+  const welcomeOpen = useAstroStore((s) => s.welcomeOpen);
 
   const materialRef = useRef();
   const warningMaterialRef = useRef();
@@ -32,8 +34,18 @@ export default function IntroText() {
     }
   }, []);
 
+  useEffect(() => {
+    if (runIntro && !welcomeOpen) {
+      holdTimer.current = 0;
+      setIsFinished(false);
+      if (materialRef.current) materialRef.current.opacity = 1;
+      if (logoMaterialRef.current) logoMaterialRef.current.opacity = 1;
+      if (warningMaterialRef.current) warningMaterialRef.current.opacity = 1;
+    }
+  }, [runIntro, welcomeOpen]);
+
   useFrame((state, delta) => {
-    if (isFinished) return;
+    if (welcomeOpen || isFinished) return;
 
     // 1. Advance the text's internal timer regardless of what the intro sequence is doing
     holdTimer.current += delta;
@@ -84,7 +96,7 @@ export default function IntroText() {
     }
   });
 
-  if (isFinished) return null;
+  if (welcomeOpen || isFinished) return null;
 
   const titlePosition = isTouchDevice ? [-140, 0, -80] : [-140, 0, -150];
   const warningPos = [-180, 0, -130];
