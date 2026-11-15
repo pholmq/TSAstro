@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useLayoutEffect } from "react";
 import { Text3D } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { useStore } from "../../store";
@@ -9,6 +9,8 @@ import TychosLogo3D from "./TychosLogo3D";
 const TYCHOSIUM_DURATION = 2.0; // Seconds before main title starts fading
 const WARNING_DURATION = 8.0; // Seconds before warning text starts fading
 const FADE_SPEED = 0.05; // Consistent slow fade speed
+const LOGO_HALF_WIDTH = 27; // TychosLogo3D radius ~179 * 0.15 scale
+const LOGO_TO_TEXT_GAP = 8; // Visual gap between logo ring and first letter
 
 export default function IntroText() {
   const runIntro = useStore((s) => s.runIntro);
@@ -18,6 +20,9 @@ export default function IntroText() {
   const materialRef = useRef();
   const warningMaterialRef = useRef();
   const logoMaterialRef = useRef();
+  const logoGroupRef = useRef();
+  const textRef = useRef();
+  const hasCenteredRef = useRef(false);
 
   // This timer runs independently of the global runIntro state
   const holdTimer = useRef(0);
@@ -34,9 +39,35 @@ export default function IntroText() {
     }
   }, []);
 
+  const centerTitleAndLogo = () => {
+    const textMesh = textRef.current;
+    const logoGroup = logoGroupRef.current;
+    if (!textMesh?.geometry || !logoGroup) return false;
+
+    if (!textMesh.geometry.boundingBox) {
+      textMesh.geometry.computeBoundingBox();
+    }
+    const bbox = textMesh.geometry.boundingBox;
+    if (!bbox) return false;
+
+    const textWidth = bbox.max.x - bbox.min.x;
+    if (!Number.isFinite(textWidth) || textWidth <= 0) return false;
+
+    const totalWidth = LOGO_HALF_WIDTH * 2 + LOGO_TO_TEXT_GAP + textWidth;
+    const logoCenterZ = -totalWidth / 2 + LOGO_HALF_WIDTH;
+    const titleStartZ =
+      logoCenterZ + LOGO_HALF_WIDTH + LOGO_TO_TEXT_GAP - bbox.min.x;
+
+    logoGroup.position.z = logoCenterZ;
+    textMesh.position.z = titleStartZ;
+    hasCenteredRef.current = true;
+    return true;
+  };
+
   useEffect(() => {
     if (runIntro && !welcomeOpen) {
       holdTimer.current = 0;
+      hasCenteredRef.current = false;
       setIsFinished(false);
       if (materialRef.current) materialRef.current.opacity = 1;
       if (logoMaterialRef.current) logoMaterialRef.current.opacity = 1;
@@ -44,8 +75,18 @@ export default function IntroText() {
     }
   }, [runIntro, welcomeOpen]);
 
+  useLayoutEffect(() => {
+    if (welcomeOpen || isFinished) return;
+    hasCenteredRef.current = false;
+    centerTitleAndLogo();
+  }, [welcomeOpen, isFinished, isTouchDevice]);
+
   useFrame((state, delta) => {
     if (welcomeOpen || isFinished) return;
+
+    if (!hasCenteredRef.current) {
+      centerTitleAndLogo();
+    }
 
     // 1. Advance the text's internal timer regardless of what the intro sequence is doing
     holdTimer.current += delta;
@@ -98,23 +139,32 @@ export default function IntroText() {
 
   if (welcomeOpen || isFinished) return null;
 
-  const titlePosition = isTouchDevice ? [-140, 0, -80] : [-140, 0, -150];
+  const titleSize = isTouchDevice ? 15 : 30;
+  const fallbackTextWidth = isTouchDevice ? 200 : 400;
+  const fallbackTotalWidth =
+    LOGO_HALF_WIDTH * 2 + LOGO_TO_TEXT_GAP + fallbackTextWidth;
+  const fallbackLogoZ = -fallbackTotalWidth / 2 + LOGO_HALF_WIDTH;
+  const fallbackTitleZ = fallbackLogoZ + LOGO_HALF_WIDTH + LOGO_TO_TEXT_GAP;
+
+  const titlePosition = [-140, 0, fallbackTitleZ];
   const warningPos = [-180, 0, -130];
-  const logoPosition = isTouchDevice ? [-125, 0, -115] : [-125, 0, -185];
+  const logoPosition = [-125, 0, fallbackLogoZ];
 
   return (
     <>
-      <TychosLogo3D
-        materialRef={logoMaterialRef}
-        position={logoPosition}
-        rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
-      />
+      <group ref={logoGroupRef} position={logoPosition}>
+        <TychosLogo3D
+          materialRef={logoMaterialRef}
+          rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
+        />
+      </group>
 
       <Text3D
+        ref={textRef}
         font={process.env.PUBLIC_URL + "/fonts/Cambria_Regular.json"}
         position={titlePosition}
         rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
-        size={isTouchDevice ? 20 : 30}
+        size={titleSize}
         height={8}
         curveSegments={12}
         bevelEnabled
@@ -123,7 +173,7 @@ export default function IntroText() {
         bevelOffset={0}
         bevelSegments={8}
       >
-        The Tychosium
+        The Tychosium Astro
         <meshStandardMaterial
           ref={materialRef}
           color="white"
