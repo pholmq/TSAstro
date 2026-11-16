@@ -76,6 +76,14 @@ const NatalChartPanel = () => {
   const setShowAspects = useStore((s) => s.setShowAspects);
   const showAspectLabels = useStore((s) => s.showAspectLabels ?? true);
   const setShowAspectLabels = useStore((s) => s.setShowAspectLabels);
+  const showConstellations = useStore((s) => s.showConstellations ?? false);
+  const setShowConstellations = useStore((s) => s.setShowConstellations);
+  const showConstellationLabels = useStore(
+    (s) => s.showConstellationLabels ?? true
+  );
+  const setShowConstellationLabels = useStore(
+    (s) => s.setShowConstellationLabels
+  );
   const updateAC = useStore((s) => s.updateAC);
   // Subscribe to updAC & run so mode indicator updates immediately on jumps/playback
   useStore((s) => s.updAC);
@@ -532,6 +540,70 @@ const NatalChartPanel = () => {
             })}
           </div>
         )}
+
+        {/* Constellations & Labels Quick Toggle */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: "6px",
+            marginTop: "6px",
+            paddingTop: "6px",
+            borderTop: "1px solid #1f2937",
+          }}
+        >
+          <span
+            style={{
+              fontSize: "10px",
+              color: "#d1d5db",
+              fontWeight: 600,
+            }}
+            title="Show star constellation lines and names (Gemini, Taurus, Capricornus, etc.)"
+          >
+            Star Constellations
+          </span>
+          <div style={{ display: "flex", gap: "4px" }}>
+            {showConstellations && (
+              <button
+                type="button"
+                onClick={() =>
+                  setShowConstellationLabels(!showConstellationLabels)
+                }
+                style={{
+                  padding: "2px 6px",
+                  borderRadius: "4px",
+                  border: "none",
+                  backgroundColor: showConstellationLabels
+                    ? "#2563eb"
+                    : "#374151",
+                  color: showConstellationLabels ? "#ffffff" : "#9ca3af",
+                  fontSize: "10px",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                }}
+              >
+                Labels {showConstellationLabels ? "On" : "Off"}
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={() => setShowConstellations(!showConstellations)}
+              style={{
+                padding: "2px 6px",
+                borderRadius: "4px",
+                border: "none",
+                backgroundColor: showConstellations ? "#2563eb" : "#374151",
+                color: showConstellations ? "#ffffff" : "#9ca3af",
+                fontSize: "10px",
+                fontWeight: 600,
+                cursor: "pointer",
+              }}
+            >
+              Lines {showConstellations ? "On" : "Off"}
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* Section Tabs */}

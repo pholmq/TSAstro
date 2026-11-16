@@ -112,6 +112,8 @@ export const useStore = create(
 
       showConstellations: false,
       setShowConstellations: (v) => set({ showConstellations: v }),
+      showConstellationLabels: true,
+      setShowConstellationLabels: (v) => set({ showConstellationLabels: v }),
 
       starDistanceModifier: 23262,
       setStarDistanceModifier: (v) => set({ starDistanceModifier: v }),

@@ -1,11 +1,41 @@
 import React, { useMemo, useRef, useEffect } from "react";
 import * as THREE from "three";
+import { useFrame } from "@react-three/fiber";
 import constellationsData from "../../settings/constellations.json"; // Adjust path if necessary
 import bscSettings from "../../settings/BSC.json"; // Need this to map HIP to positions
 import { useBSCStarData } from "./useBSCStarData";
+import { computeConstellationLabelEntries } from "./constellationLabels";
 import { useStore, usePlotStore } from "../../store";
 import { dateTimeToPos } from "../../utils/time-date-functions";
 import { movePlotModel } from "../../utils/plotModelFunctions";
+
+const LABEL_CANVAS_WIDTH = 384;
+const LABEL_CANVAS_HEIGHT = 64;
+const TARGET_LABEL_PX_HEIGHT = 34;
+
+function createConstellationLabelTexture(name) {
+  const canvas = document.createElement("canvas");
+  canvas.width = LABEL_CANVAS_WIDTH;
+  canvas.height = LABEL_CANVAS_HEIGHT;
+  const ctx = canvas.getContext("2d");
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.font = "600 30px Arial, Helvetica, sans-serif";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.lineJoin = "round";
+  ctx.lineWidth = 6;
+  ctx.strokeStyle = "rgba(6, 10, 22, 0.92)";
+  ctx.strokeText(name, canvas.width / 2, canvas.height / 2 + 1, canvas.width - 24);
+
+  ctx.fillStyle = "#93c5fd";
+  ctx.fillText(name, canvas.width / 2, canvas.height / 2 + 1, canvas.width - 24);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.needsUpdate = true;
+  return texture;
+}
 
 const Constellations = () => {
   // 1. Get current star positions from the hook (reactive to store settings)
@@ -13,7 +43,13 @@ const Constellations = () => {
   const { positions } = useBSCStarData(true);
   const plotObjects = usePlotStore((s) => s.plotObjects);
   const showConstellations = useStore((s) => s.showConstellations);
+  const showConstellationLabels = useStore((s) => s.showConstellationLabels ?? true);
+  const hScale = useStore((s) => s.hScale);
   const groupRef = useRef();
+  const labelSpriteRefs = useRef([]);
+  const textureCacheRef = useRef(new Map());
+
+  const sphereRadius = (20000 * hScale) / 100;
 
   // 2. Create a lookup map: HIP Number -> Index in the positions array
   // We utilize bscSettings (BSC.json) because useBSCStarData returns positions 
@@ -82,7 +118,45 @@ const Constellations = () => {
     return new THREE.BufferGeometry().setFromPoints(points);
   }, [positions, hipToIndexMap]);
 
-  // 4. Alignment Logic (Must match Stars.jsx to ensure overlay is correct)
+  // 4. Compute primary constellation label centroids on the celestial sphere
+  const labelItems = useMemo(() => {
+    const entries = computeConstellationLabelEntries(
+      constellationsData.constellations || [],
+      hipToIndexMap,
+      positions,
+      sphereRadius
+    );
+    const cache = textureCacheRef.current;
+    return entries.map((entry) => {
+      if (!cache.has(entry.id)) {
+        cache.set(entry.id, createConstellationLabelTexture(entry.name));
+      }
+      return {
+        ...entry,
+        texture: cache.get(entry.id),
+      };
+    });
+  }, [positions, hipToIndexMap, sphereRadius]);
+
+  useEffect(() => {
+    const cache = textureCacheRef.current;
+    return () => {
+      cache.forEach((tex) => tex.dispose());
+      cache.clear();
+    };
+  }, []);
+
+  const scratch = useMemo(
+    () => ({
+      cameraWorldPos: new THREE.Vector3(),
+      cameraForward: new THREE.Vector3(),
+      spriteWorldPos: new THREE.Vector3(),
+      toSprite: new THREE.Vector3(),
+    }),
+    []
+  );
+
+  // 5. Alignment Logic (Must match Stars.jsx to ensure overlay is correct)
   // This positions the group at Earth's location and aligns it with J2000 orientation
   useEffect(() => {
     if (plotObjects.length > 0 && groupRef.current) {
@@ -107,6 +181,48 @@ const Constellations = () => {
     }
   }, [plotObjects]);
 
+  useFrame(({ camera, size }) => {
+    if (!showConstellations || !showConstellationLabels || size.height <= 0) {
+      return;
+    }
+
+    camera.getWorldPosition(scratch.cameraWorldPos);
+    camera.getWorldDirection(scratch.cameraForward);
+
+    const maxWorldHeight = sphereRadius * 0.038;
+    const aspect = LABEL_CANVAS_WIDTH / LABEL_CANVAS_HEIGHT;
+
+    for (let i = 0; i < labelItems.length; i++) {
+      const sprite = labelSpriteRefs.current[i];
+      if (!sprite) continue;
+
+      sprite.getWorldPosition(scratch.spriteWorldPos);
+      scratch.toSprite.subVectors(scratch.spriteWorldPos, scratch.cameraWorldPos);
+      const depth = scratch.toSprite.dot(scratch.cameraForward);
+
+      if (depth <= 1) {
+        sprite.visible = false;
+        continue;
+      }
+
+      sprite.visible = true;
+      let unitsPerPixel;
+      if (camera.isOrthographicCamera) {
+        unitsPerPixel = (camera.top - camera.bottom) / camera.zoom / size.height;
+      } else {
+        const vFov = (camera.fov * Math.PI) / 180;
+        unitsPerPixel =
+          (2 * Math.tan(vFov / 2) * depth) / (size.height * camera.zoom);
+      }
+
+      const worldHeight = Math.min(
+        TARGET_LABEL_PX_HEIGHT * unitsPerPixel,
+        maxWorldHeight
+      );
+      sprite.scale.set(worldHeight * aspect, worldHeight, 1);
+    }
+  });
+
   return (
     <group ref={groupRef} visible={showConstellations}>
       <lineSegments geometry={geometry}>
@@ -117,6 +233,27 @@ const Constellations = () => {
           depthWrite={false} // Prevents lines from obscuring distant stars or creating Z-fighting
         />
       </lineSegments>
+
+      <group visible={showConstellationLabels}>
+        {labelItems.map((item, idx) => (
+          <sprite
+            key={item.id}
+            ref={(el) => {
+              labelSpriteRefs.current[idx] = el;
+            }}
+            position={item.position}
+            raycast={() => null}
+          >
+            <spriteMaterial
+              map={item.texture}
+              transparent={true}
+              opacity={0.92}
+              depthWrite={false}
+              depthTest={true}
+            />
+          </sprite>
+        ))}
+      </group>
     </group>
   );
 };
