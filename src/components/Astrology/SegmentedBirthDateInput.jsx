@@ -22,8 +22,8 @@ const SEGMENT_INPUT_BASE_STYLE = {
   border: "none",
   outline: "none",
   background: "transparent",
-  color: "#F8FAFC",
-  fontSize: "14px",
+  color: "#ffffff",
+  fontSize: "13px",
   fontFamily: "inherit",
   fontVariantNumeric: "tabular-nums",
   textAlign: "center",
@@ -277,15 +277,14 @@ const SegmentedBirthDateInput = ({
         alignItems: "center",
         width: "100%",
         boxSizing: "border-box",
-        padding: "8px 10px",
-        borderRadius: "8px",
-        border: isFocused
-          ? "1px solid rgba(212, 175, 55, 0.72)"
-          : "1px solid rgba(148, 163, 184, 0.28)",
-        backgroundColor: "rgba(15, 23, 42, 0.85)",
-        color: "#F8FAFC",
+        padding: "7px 9px",
+        borderRadius: "4px",
+        border: "1px solid #4b5563",
+        boxShadow: isFocused ? "0 0 0 2px #60a5fa" : "none",
+        backgroundColor: "#374151",
+        color: "#ffffff",
         position: "relative",
-        transition: "border-color 0.15s ease",
+        transition: "box-shadow 0.15s ease",
         ...containerStyle,
       }}
     >
@@ -310,7 +309,7 @@ const SegmentedBirthDateInput = ({
       />
       <span
         aria-hidden="true"
-        style={{ color: "#64748B", userSelect: "none", fontSize: "14px" }}
+        style={{ color: "#9ca3af", userSelect: "none", fontSize: "13px" }}
       >
         -
       </span>
@@ -334,7 +333,7 @@ const SegmentedBirthDateInput = ({
       />
       <span
         aria-hidden="true"
-        style={{ color: "#64748B", userSelect: "none", fontSize: "14px" }}
+        style={{ color: "#9ca3af", userSelect: "none", fontSize: "13px" }}
       >
         -
       </span>

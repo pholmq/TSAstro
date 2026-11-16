@@ -148,7 +148,24 @@ export const useStore = create(
       endIntro: false,
       setEndIntro: (v) => set({ endIntro: v }),
       runIntro: true,
-      setRunIntro: (v) => set({ runIntro: v }),
+      setRunIntro: (v) =>
+        set((state) => {
+          if (state.runIntro && v === false) {
+            return {
+              runIntro: false,
+              officialStarDistances: false,
+              showConstellations: true,
+            };
+          }
+          if (v === true) {
+            return {
+              runIntro: true,
+              officialStarDistances: true,
+              showConstellations: false,
+            };
+          }
+          return { runIntro: v };
+        }),
 
       editSettings: false,
       setEditSettings: (v) => set({ editSettings: v }),
