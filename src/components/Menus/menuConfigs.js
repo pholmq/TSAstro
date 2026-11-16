@@ -377,7 +377,7 @@ export const useStarsHelpersConfig = () => {
       onChange: setStarDistanceModifier,
     },
     "Celestial sphere": {
-      value: false,
+      value: !officialStarDistances,
       min: 1,
       step: 100,
       onChange: setEquidistantStars,

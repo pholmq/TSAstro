@@ -73,42 +73,39 @@ const STYLES = {
     position: "fixed",
     inset: 0,
     zIndex: 2147483647,
-    background:
-      "radial-gradient(circle at 50% 25%, rgba(28, 37, 65, 0.88), rgba(6, 10, 22, 0.94))",
-    backdropFilter: "blur(6px)",
+    background: "rgba(0, 0, 0, 0.72)",
+    backdropFilter: "blur(3px)",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     padding: "16px",
     boxSizing: "border-box",
-    fontFamily:
-      "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif",
+    fontFamily: "Arial, Helvetica, sans-serif",
   },
   card: {
     width: "100%",
-    maxWidth: "430px",
+    maxWidth: "420px",
     maxHeight: "calc(100vh - 32px)",
     display: "flex",
     flexDirection: "column",
-    background: "linear-gradient(165deg, #0B132B 0%, #111827 70%, #0F172A 100%)",
-    color: "#F8FAFC",
-    borderRadius: "14px",
-    border: "1px solid rgba(212, 175, 55, 0.38)",
-    boxShadow:
-      "0 24px 60px rgba(0, 0, 0, 0.72), 0 0 36px rgba(212, 175, 55, 0.12)",
+    backgroundColor: "#111827",
+    color: "#ffffff",
+    borderRadius: "6px",
+    border: "1px solid #374151",
+    boxShadow: "0 4px 14px rgba(0, 0, 0, 0.55)",
     overflow: "hidden",
   },
   header: {
-    padding: "16px 20px 12px",
-    borderBottom: "1px solid rgba(212, 175, 55, 0.18)",
+    padding: "10px 14px",
+    borderBottom: "1px solid #1f2937",
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
-    background: "rgba(11, 19, 43, 0.65)",
+    backgroundColor: "#181c20",
     flexShrink: 0,
   },
   body: {
-    padding: "16px 20px 20px",
+    padding: "14px 16px 16px",
     overflowY: "auto",
     display: "flex",
     flexDirection: "column",
@@ -118,54 +115,50 @@ const STYLES = {
     display: "block",
     fontSize: "11px",
     fontWeight: 600,
-    letterSpacing: "0.04em",
-    textTransform: "uppercase",
-    color: "#CBD5E1",
-    marginBottom: "5px",
+    color: "#d1d5db",
+    marginBottom: "4px",
   },
   input: {
     width: "100%",
     boxSizing: "border-box",
-    padding: "9px 11px",
-    borderRadius: "8px",
-    border: "1px solid rgba(148, 163, 184, 0.28)",
-    backgroundColor: "rgba(15, 23, 42, 0.85)",
-    color: "#F8FAFC",
-    fontSize: "14px",
+    padding: "7px 9px",
+    borderRadius: "4px",
+    border: "1px solid #4b5563",
+    backgroundColor: "#374151",
+    color: "#ffffff",
+    fontSize: "13px",
     outline: "none",
     colorScheme: "dark",
   },
   compactInput: {
     width: "100%",
     boxSizing: "border-box",
-    padding: "7px 10px",
-    borderRadius: "7px",
-    border: "1px solid rgba(148, 163, 184, 0.25)",
-    backgroundColor: "rgba(15, 23, 42, 0.85)",
-    color: "#F8FAFC",
+    padding: "6px 8px",
+    borderRadius: "4px",
+    border: "1px solid #4b5563",
+    backgroundColor: "#374151",
+    color: "#ffffff",
     fontSize: "12px",
     outline: "none",
     colorScheme: "dark",
   },
   goldBtn: {
     width: "100%",
-    padding: "11px 16px",
-    borderRadius: "9px",
-    border: "1px solid #E5C158",
-    background: "linear-gradient(135deg, #D4AF37 0%, #B8891E 100%)",
-    color: "#090E1A",
-    fontSize: "14px",
+    padding: "9px 14px",
+    borderRadius: "4px",
+    border: "1px solid #3b82f6",
+    backgroundColor: "#2563eb",
+    color: "#ffffff",
+    fontSize: "13px",
     fontWeight: 700,
-    letterSpacing: "0.02em",
     cursor: "pointer",
-    boxShadow: "0 4px 16px rgba(212, 175, 55, 0.3)",
   },
   subtleBtn: {
-    padding: "5px 10px",
-    borderRadius: "6px",
-    border: "1px solid rgba(212, 175, 55, 0.3)",
-    background: "rgba(212, 175, 55, 0.1)",
-    color: "#FDE68A",
+    padding: "4px 9px",
+    borderRadius: "4px",
+    border: "none",
+    backgroundColor: "#374151",
+    color: "#ffffff",
     fontSize: "11px",
     fontWeight: 600,
     cursor: "pointer",
@@ -366,28 +359,16 @@ const WelcomeDialog = () => {
       >
         {/* Header */}
         <div style={STYLES.header}>
-          <div style={{ display: "flex", alignItems: "center", gap: "11px" }}>
-            <div
-              style={{
-                width: "34px",
-                height: "34px",
-                borderRadius: "9px",
-                background: "rgba(212, 175, 55, 0.12)",
-                border: "1px solid rgba(212, 175, 55, 0.35)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <TychosLogoIcon size={20} bgColor="#0B132B" color="#D4AF37" />
-            </div>
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <TychosLogoIcon size={24} />
             <div>
               <div
                 style={{
-                  fontSize: "16px",
-                  fontWeight: 700,
-                  color: "#F8FAFC",
-                  letterSpacing: "0.01em",
+                  fontFamily: "Cambria, Georgia, serif",
+                  fontSize: "17px",
+                  fontWeight: "bold",
+                  color: "#ffffff",
+                  lineHeight: 1.15,
                 }}
               >
                 The Tychosium Astro
@@ -395,11 +376,10 @@ const WelcomeDialog = () => {
               <div
                 style={{
                   fontSize: "11px",
-                  color: "#D4AF37",
-                  letterSpacing: "0.04em",
+                  color: "#9ca3af",
                 }}
               >
-                3D Astrology & Birth Chart Explorer
+                3D Astrology &amp; Birth Chart Explorer
               </div>
             </div>
           </div>
@@ -410,14 +390,17 @@ const WelcomeDialog = () => {
               onClick={() => setWelcomeOpen(false)}
               title="Return to active chart"
               style={{
-                background: "transparent",
-                border: "1px solid rgba(148, 163, 184, 0.25)",
-                color: "#94A3B8",
-                borderRadius: "6px",
-                width: "28px",
-                height: "28px",
+                backgroundColor: "#374151",
+                border: "none",
+                color: "#ffffff",
+                borderRadius: "4px",
+                width: "26px",
+                height: "26px",
                 cursor: "pointer",
-                fontSize: "13px",
+                fontSize: "12px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
               }}
             >
               ✕
@@ -461,7 +444,7 @@ const WelcomeDialog = () => {
           <div
             style={{
               fontSize: "11px",
-              color: "#94A3B8",
+              color: "#9ca3af",
               marginTop: "-6px",
               display: "flex",
               justifyContent: "space-between",
@@ -479,19 +462,14 @@ const WelcomeDialog = () => {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between",
-                padding: "9px 12px",
-                borderRadius: "9px",
-                background:
-                  ELEMENT_COLORS[previewSunSign.element]?.bg ||
-                  "rgba(212, 175, 55, 0.14)",
-                border: `1px solid ${
-                  ELEMENT_COLORS[previewSunSign.element]?.border ||
-                  "rgba(212, 175, 55, 0.4)"
-                }`,
+                padding: "8px 10px",
+                borderRadius: "4px",
+                backgroundColor: "#181c20",
+                border: "1px solid #374151",
               }}
             >
               <div style={{ display: "flex", alignItems: "center", gap: "9px" }}>
-                <span style={{ fontSize: "20px", lineHeight: 1 }}>
+                <span style={{ fontSize: "19px", lineHeight: 1 }}>
                   {previewSunSign.symbol}
                 </span>
                 <div>
@@ -499,12 +477,12 @@ const WelcomeDialog = () => {
                     style={{
                       fontSize: "13px",
                       fontWeight: 700,
-                      color: "#F8FAFC",
+                      color: "#ffffff",
                     }}
                   >
                     {previewSunSign.name}
                   </div>
-                  <div style={{ fontSize: "11px", color: "#CBD5E1" }}>
+                  <div style={{ fontSize: "11px", color: "#9ca3af" }}>
                     {previewSunSign.dateRange} · {previewSunSign.ruler}
                   </div>
                 </div>
@@ -514,10 +492,10 @@ const WelcomeDialog = () => {
                   fontSize: "10px",
                   fontWeight: 700,
                   padding: "3px 8px",
-                  borderRadius: "999px",
-                  background: "rgba(11, 19, 43, 0.55)",
+                  borderRadius: "4px",
+                  backgroundColor: "#374151",
                   color:
-                    ELEMENT_COLORS[previewSunSign.element]?.text || "#FDE68A",
+                    ELEMENT_COLORS[previewSunSign.element]?.text || "#e5e7eb",
                 }}
               >
                 {previewSunSign.element}
@@ -534,7 +512,7 @@ const WelcomeDialog = () => {
                 background: "transparent",
                 border: "none",
                 padding: "2px 0",
-                color: "#94A3B8",
+                color: "#9ca3af",
                 fontSize: "12px",
                 fontWeight: 500,
                 cursor: "pointer",
@@ -553,10 +531,10 @@ const WelcomeDialog = () => {
               <div
                 style={{
                   marginTop: "8px",
-                  padding: "12px",
-                  borderRadius: "10px",
-                  border: "1px solid rgba(148, 163, 184, 0.2)",
-                  background: "rgba(15, 23, 42, 0.5)",
+                  padding: "10px",
+                  borderRadius: "4px",
+                  border: "1px solid #374151",
+                  backgroundColor: "#181c20",
                   display: "flex",
                   flexDirection: "column",
                   gap: "10px",

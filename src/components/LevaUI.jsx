@@ -32,6 +32,8 @@ const LevaUI = () => {
     cameraTransitioning,
     setOrbits,
     setActualPlanetSizes,
+    officialStarDistances,
+    showConstellations,
   } = useStore();
 
   // Load extracted configurations
@@ -80,6 +82,8 @@ const LevaUI = () => {
       Ephemerides: ephimerides,
       Positions: showPositions,
       Search: searchStars,
+      "Celestial sphere": !officialStarDistances,
+      Constellations: showConstellations,
     });
   }, [
     actualPlanetSizes,
@@ -87,6 +91,8 @@ const LevaUI = () => {
     ephimerides,
     showPositions,
     searchStars,
+    officialStarDistances,
+    showConstellations,
     set2,
   ]);
 
