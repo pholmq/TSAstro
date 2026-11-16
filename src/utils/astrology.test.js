@@ -198,17 +198,25 @@ describe("computeAspects", () => {
 });
 
 describe("getAstrologyQuote", () => {
-  test("has quotes for all 12 signs and 14+ general quotes without Brahe/Longomontanus", () => {
+  test("has quotes for all 12 signs and general quotes including Brahe/Longomontanus without Kepler", () => {
     expect(Object.keys(SIGN_QUOTES)).toHaveLength(12);
-    expect(GENERAL_ASTROLOGY_QUOTES.length).toBeGreaterThanOrEqual(14);
+    expect(GENERAL_ASTROLOGY_QUOTES.length).toBeGreaterThanOrEqual(29);
 
     const allTexts = [
       ...Object.values(SIGN_QUOTES).flat(),
       ...GENERAL_ASTROLOGY_QUOTES,
     ];
     for (const text of allTexts) {
-      expect(text).not.toMatch(/brahe|tycho|longomontanus/i);
+      expect(text).not.toMatch(/kepler/i);
     }
+    expect(
+      GENERAL_ASTROLOGY_QUOTES.some((t) => /Tycho Brahe/.test(t))
+    ).toBe(true);
+    expect(
+      GENERAL_ASTROLOGY_QUOTES.some((t) =>
+        /Christen Sørensen Longomontanus/.test(t)
+      )
+    ).toBe(true);
   });
 
   test("returns a sign-specific quote for the user's star sign and avoids excluded text", () => {
@@ -217,11 +225,11 @@ describe("getAstrologyQuote", () => {
       expect(first.signId).toBe(sign.id);
       expect(first.isSignSpecific).toBe(true);
       expect(SIGN_QUOTES[sign.id]).toContain(first.text);
-      expect(first.text).not.toMatch(/brahe|tycho|longomontanus/i);
+      expect(first.text).not.toMatch(/kepler/i);
 
       const second = getAstrologyQuote(sign.id, first.text);
       expect(second.text).not.toBe(first.text);
-      expect(second.text).not.toMatch(/brahe|tycho|longomontanus/i);
+      expect(second.text).not.toMatch(/kepler/i);
     }
   });
 });
