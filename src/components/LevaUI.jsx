@@ -34,6 +34,7 @@ const LevaUI = () => {
     setActualPlanetSizes,
     officialStarDistances,
     showConstellations,
+    showConstellationLabels,
   } = useStore();
 
   // Load extracted configurations
@@ -84,6 +85,7 @@ const LevaUI = () => {
       Search: searchStars,
       "Celestial sphere": !officialStarDistances,
       Constellations: showConstellations,
+      "Constellation labels": showConstellationLabels,
     });
   }, [
     actualPlanetSizes,
@@ -93,6 +95,7 @@ const LevaUI = () => {
     searchStars,
     officialStarDistances,
     showConstellations,
+    showConstellationLabels,
     set2,
   ]);
 

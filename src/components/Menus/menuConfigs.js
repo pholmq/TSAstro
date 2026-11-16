@@ -347,6 +347,8 @@ export const useStarsHelpersConfig = () => {
     setOfficialStarDistances,
     showConstellations,
     setShowConstellations,
+    showConstellationLabels,
+    setShowConstellationLabels,
     eclipticGrid,
     setEclipticGrid,
     zodiac,
@@ -385,6 +387,10 @@ export const useStarsHelpersConfig = () => {
     Constellations: {
       value: showConstellations,
       onChange: setShowConstellations,
+    },
+    "Constellation labels": {
+      value: showConstellationLabels,
+      onChange: setShowConstellationLabels,
     },
     "Equinoxes & Solistices": {
       value: eclipticGrid,
