@@ -155,14 +155,12 @@ export const useStore = create(
           if (state.runIntro && v === false) {
             return {
               runIntro: false,
-              officialStarDistances: false,
               showConstellations: true,
             };
           }
           if (v === true) {
             return {
               runIntro: true,
-              officialStarDistances: true,
               showConstellations: false,
             };
           }

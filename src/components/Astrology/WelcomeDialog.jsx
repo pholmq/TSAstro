@@ -503,6 +503,53 @@ const WelcomeDialog = () => {
             </div>
           )}
 
+          {profiles.length > 0 && (
+            <div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <label htmlFor="astro-saved-profile-select" style={STYLES.label}>
+                  Load Profile
+                </label>
+                {selectedSavedProfileId && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      deleteProfile(selectedSavedProfileId);
+                      setSelectedSavedProfileId("");
+                    }}
+                    style={{
+                      ...STYLES.subtleBtn,
+                      padding: "1px 6px",
+                      fontSize: "10px",
+                      marginBottom: "4px",
+                    }}
+                  >
+                    Delete
+                  </button>
+                )}
+              </div>
+              <select
+                id="astro-saved-profile-select"
+                value={selectedSavedProfileId}
+                onChange={handleLoadSavedProfile}
+                onKeyDown={stopInputKeyPropagation}
+                style={STYLES.input}
+              >
+                <option value="">Load a saved profile...</option>
+                {profiles.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.name} — {p.birthDate} {p.birthTime || "12:00"}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
           {/* Collapsible Extra Options (Profile, Birth Place, Timezone) */}
           <div>
             <button
@@ -540,50 +587,6 @@ const WelcomeDialog = () => {
                   gap: "10px",
                 }}
               >
-                {profiles.length > 0 && (
-                  <div>
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                      }}
-                    >
-                      <label style={STYLES.label}>Saved Profiles</label>
-                      {selectedSavedProfileId && (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            deleteProfile(selectedSavedProfileId);
-                            setSelectedSavedProfileId("");
-                          }}
-                          style={{
-                            ...STYLES.subtleBtn,
-                            padding: "1px 6px",
-                            fontSize: "10px",
-                            marginBottom: "4px",
-                          }}
-                        >
-                          Delete
-                        </button>
-                      )}
-                    </div>
-                    <select
-                      value={selectedSavedProfileId}
-                      onChange={handleLoadSavedProfile}
-                      onKeyDown={stopInputKeyPropagation}
-                      style={STYLES.compactInput}
-                    >
-                      <option value="">Load a saved profile...</option>
-                      {profiles.map((p) => (
-                        <option key={p.id} value={p.id}>
-                          {p.name} — {p.birthDate} {p.birthTime || "12:00"}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                )}
-
                 <div
                   style={{
                     display: "grid",
