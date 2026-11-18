@@ -49,6 +49,7 @@ const PlanetCameraUI = () => {
 
   const plancamUIStore = useCreateStore();
   const isUpdatingFromCity = useRef(false);
+  const isSyncingStoreRef = useRef(false);
 
   // Calculate zoom from FOV
   const planCamZoom = 121 - planCamFov;
@@ -199,7 +200,7 @@ const PlanetCameraUI = () => {
         step: 0.01,
         onChange: (v) => {
           setPlanCamLat(v);
-          if (!isUpdatingFromCity.current) {
+          if (!isUpdatingFromCity.current && !isSyncingStoreRef.current) {
             set({ Location: "-" });
           }
         },
@@ -212,7 +213,7 @@ const PlanetCameraUI = () => {
         step: 0.01,
         onChange: (v) => {
           setPlanCamLong(v);
-          if (!isUpdatingFromCity.current) {
+          if (!isUpdatingFromCity.current && !isSyncingStoreRef.current) {
             set({ Location: "-" });
           }
         },
@@ -262,6 +263,19 @@ const PlanetCameraUI = () => {
     // Push the changes to Leva and blank the Location dropdown
     set({ Latitude: newLat, Longitude: newLong, Location: "-" });
   };
+
+  useEffect(() => {
+    isSyncingStoreRef.current = true;
+    set({
+      Planet: planetCameraTarget,
+      Latitude: planCamLat,
+      Longitude: planCamLong,
+    });
+    const timer = setTimeout(() => {
+      isSyncingStoreRef.current = false;
+    }, 50);
+    return () => clearTimeout(timer);
+  }, [planCamLat, planCamLong, planetCameraTarget, set]);
 
   const canvasRef = useRef(null);
   useEffect(() => {

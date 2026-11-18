@@ -141,7 +141,7 @@ const TSNext = () => {
 
         <Suspense fallback={null}>
           <OrbitCamera />
-          {planetCamera && !cameraTransitioning && <PlanetCamera />}
+          {planetCamera && <PlanetCamera />}
           <TransitionCamera />
 
           <FocusSearchedStar />
