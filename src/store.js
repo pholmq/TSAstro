@@ -156,12 +156,15 @@ export const useStore = create(
             return {
               runIntro: false,
               showConstellations: true,
+              planetCamera: true,
             };
           }
           if (v === true) {
             return {
               runIntro: true,
               showConstellations: false,
+              planetCamera: false,
+              cameraTransitioning: false,
             };
           }
           return { runIntro: v };

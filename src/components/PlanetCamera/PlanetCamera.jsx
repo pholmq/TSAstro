@@ -189,7 +189,7 @@ export default function PlanetCamera() {
     }
   });
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!latAxisRef.current) return;
     latAxisRef.current.rotation.x = latToRad(planCamLat);
     longAxisRef.current.rotation.y = longToRad(planCamLong);

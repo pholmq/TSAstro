@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { useStore } from "../../store";
 import { useAstroStore } from "../../astroStore";
+import { usePlanetCameraStore } from "../PlanetCamera/planetCameraStore";
 import { BIRTH_CITY_PRESETS, getSunSignFromDate } from "../../utils/astrology";
 import { isValidDate } from "../../utils/time-date-functions";
 import TychosLogoIcon from "../../utils/TychosLogoIcon";
@@ -165,7 +166,7 @@ const STYLES = {
   },
 };
 
-function activateNatalChartScene(natalPos) {
+function activateNatalChartScene(natalPos, location = null) {
   const store = useStore.getState();
   store.posRef.current = natalPos;
   if (typeof store.setRun === "function") {
@@ -176,6 +177,20 @@ function activateNatalChartScene(natalPos) {
   store.updateAC();
   store.setTropicalZodiac(true);
   store.setRunIntro(true);
+
+  const planetCam = usePlanetCameraStore.getState();
+  planetCam.setPlanetCameraTarget("Earth");
+  if (
+    location &&
+    Number.isFinite(location.lat) &&
+    Number.isFinite(location.lon)
+  ) {
+    planetCam.setPlanCamLat(location.lat);
+    planetCam.setPlanCamLong(location.lon);
+  } else {
+    planetCam.setPlanCamLat(0);
+    planetCam.setPlanCamLong(0);
+  }
 
   const astro = useAstroStore.getState();
   astro.setWelcomeOpen(false);
@@ -326,6 +341,8 @@ const WelcomeDialog = () => {
     }
 
     const effectiveTime = birthTime && birthTime.trim() ? birthTime : "12:00";
+    const latVal = latTrim !== "" ? Number(latTrim) : null;
+    const lonVal = lonTrim !== "" ? Number(lonTrim) : null;
     const { natalPos } = loginOrCreateProfile({
       mode: "create",
       name,
@@ -335,12 +352,12 @@ const WelcomeDialog = () => {
       birthTime: effectiveTime,
       tzOffsetMinutes: Number(tzOffsetMinutes),
       birthCity: latTrim !== "" ? birthCity || "Custom Location" : "",
-      birthLat: latTrim !== "" ? Number(latTrim) : null,
-      birthLon: lonTrim !== "" ? Number(lonTrim) : null,
+      birthLat: latVal,
+      birthLon: lonVal,
       saveProfile,
     });
 
-    activateNatalChartScene(natalPos);
+    activateNatalChartScene(natalPos, { lat: latVal, lon: lonVal });
   };
 
   return createPortal(

@@ -25,6 +25,7 @@ export default function OrbitCamera() {
 
   const targetObjRef = useRef(null);
   const target = useMemo(() => new Vector3(), []);
+  const prevRunIntroRef = useRef(runIntro);
 
   // --- TOUCH DETECTION ---
   const [isTouchDevice, setIsTouchDevice] = useState(false);
@@ -71,8 +72,13 @@ export default function OrbitCamera() {
   }, [cameraTarget, cameraUpdate, camera, scene, target]);
 
   useEffect(() => {
+    const introJustEnded = prevRunIntroRef.current && !runIntro;
+    prevRunIntroRef.current = runIntro;
+
     if (controlsRef.current && !runIntro) {
-      controlsRef.current.setPosition(0, 2200, 0, true);
+      // Snap immediately when transitioning out of deep-space intro so TransitionCamera
+      // begins smoothly from (0, 2200, 0) instead of far-space coordinates.
+      controlsRef.current.setPosition(0, 2200, 0, !introJustEnded);
     }
   }, [resetClicked, runIntro]);
 
